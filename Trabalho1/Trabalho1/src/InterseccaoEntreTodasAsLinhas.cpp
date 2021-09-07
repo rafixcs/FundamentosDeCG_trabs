@@ -34,7 +34,7 @@ using namespace std;
 #include "AABB.h"
 #include "CollisionChecker.h"
 #include "Temporizador.h"
-#include "../BlockSpasce.h"
+#include "BlockSpasce.h"
 
 
 const int N_LINHAS = 50;
@@ -49,8 +49,10 @@ bool MOSTRA_BBX = false;
 bool BBX_TEST = true;
 bool SECTIONS_TEST = true;
 bool RESTART = false;
+bool DEBUGLINESBLOCK = false;
 
 int NBlocksSpaces = 34;
+int blockIndex = 0;
 int teste = 10;
 
 Linha Linhas[N_LINHAS];
@@ -62,7 +64,7 @@ BlockSpace blocksSpaces;
 // **********************************************************************
 void init(void)
 {
-    blocksSpaces.Init(650.f, 500.f, NBlocksSpaces);
+    blocksSpaces.Init(100.f, 100.f, NBlocksSpaces);
 
     // Define a cor do fundo da tela (BRANCO)
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -168,18 +170,18 @@ void DesenhaCenario()
     if (BBX_TEST) 
     {
         for(int i=0; i< N_LINHAS; i++)
-        {
-            PA.set(Linhas[i].x1, Linhas[i].y1);
-            PB.set(Linhas[i].x2, Linhas[i].y2);
+        {            
             for(int j=i+1; j< N_LINHAS; j++)
-            {
-                PC.set(Linhas[j].x1, Linhas[j].y1);
-                PD.set(Linhas[j].x2, Linhas[j].y2);
-                ContChamadas++;          
-            
+            {                
+                ContChamadas++;                      
                 if (CollisionChecker::CheckCollisionBoxes(Linhas[i].aabb, Linhas[j].aabb))
                 {
                     ContBBxHit++;
+
+                    PA.set(Linhas[i].x1, Linhas[i].y1);
+                    PB.set(Linhas[i].x2, Linhas[i].y2);
+                    PC.set(Linhas[j].x1, Linhas[j].y1);
+                    PD.set(Linhas[j].x2, Linhas[j].y2);
 
                     if (HaInterseccao(PA, PB, PC, PD))
                     {
@@ -200,31 +202,36 @@ void DesenhaCenario()
         }                   
     }
     else if (SECTIONS_TEST)
-    {        
-        int i = 0;
-        for (int k = 0; k < blocksSpaces.GetNSections(); k++)
+    {   
+        int teste_a = 0;
+        int teste_b = 0;
+        for (auto lines_indexes : blocksSpaces.GetAllBlocks())
         {
-            std::vector<int> lines_indexes = blocksSpaces.GetLinesIndexBySection(k);
-            for (int w = 0; w < lines_indexes.size(); w++)
-            {
-                i = lines_indexes[w];
-                PA.set(Linhas[i].x1, Linhas[i].y1);
-                PB.set(Linhas[i].x2, Linhas[i].y2);
-                for (int j = w + 1; j < lines_indexes.size(); j++)
-                {
-                    PC.set(Linhas[j].x1, Linhas[j].y1);
-                    PD.set(Linhas[j].x2, Linhas[j].y2);
+            for (int i = 0; i < lines_indexes.size(); i++)
+            {                
+                teste_a = lines_indexes[i];
+                for (int j = i+1; j < lines_indexes.size(); j++)
+                {                                        
                     ContChamadas++;
-
-                    if (CollisionChecker::CheckCollisionBoxes(Linhas[i].aabb, Linhas[j].aabb))
+                    teste_b = lines_indexes[j];
+                    if (CollisionChecker::CheckCollisionBoxes(Linhas[teste_a].aabb, Linhas[teste_b].aabb))
                     {
                         ContBBxHit++;
+
+                        PA.set(Linhas[teste_a].x1, Linhas[teste_a].y1);
+                        PB.set(Linhas[teste_a].x2, Linhas[teste_a].y2);
+                        PC.set(Linhas[teste_b].x1, Linhas[teste_b].y1);
+                        PD.set(Linhas[teste_b].x2, Linhas[teste_b].y2);
+
+
+                        //Linhas[teste_a].aabb->DrawBox();
+                        //Linhas[teste_b].aabb->DrawBox();
 
                         if (HaInterseccao(PA, PB, PC, PD))
                         {
                             ContadorInt++;
-                            Linhas[i].desenhaLinha();
-                            Linhas[j].desenhaLinha();
+                            Linhas[teste_a].desenhaLinha();
+                            Linhas[teste_b].desenhaLinha();
                         }
                     }
                 }
@@ -234,6 +241,16 @@ void DesenhaCenario()
                 glColor4f(0.f, 0.f, 0.f, 0.5f);
                 blocksSpaces.DrawSections();
                 glColor3f(1, 0, 0);
+
+                if (DEBUGLINESBLOCK)
+                {
+                    std::vector<int> lines_indexes = blocksSpaces.GetLinesIndexBySection(blockIndex);
+                    for (auto a : lines_indexes)
+                    {
+                        Linhas[a].desenhaLinha();
+                        Linhas[a].aabb->DrawBox();
+                    }
+                }
             }
         }
     }
@@ -336,6 +353,25 @@ void keyboard ( unsigned char key, int x, int y )
         }
         RESTART = true;
         break;
+    case 'd':
+        if (!DEBUGLINESBLOCK)
+        {
+            DEBUGLINESBLOCK = true;
+
+            std::cout << "Insert the block index: ";
+
+            std::cin >> blockIndex;
+            while (blockIndex < 0 || blockIndex > NBlocksSpaces)
+            {
+                std::cout << "Invalid index value. Try again..." << std::endl;
+                std::cin >> blockIndex;
+            }
+        }
+        else
+        {
+            std::cout << ">> DEBUGLINESBLOCK disable <<" << std::endl;
+            DEBUGLINESBLOCK = false;
+        }
     default:
         break;
     }

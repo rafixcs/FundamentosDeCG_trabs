@@ -153,8 +153,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BlockSpasce.cpp" />
     <ClCompile Include="src\AABB.cpp" />
+    <ClCompile Include="src\BlockSpasce.cpp" />
     <ClCompile Include="src\InterseccaoEntreTodasAsLinhas.cpp" />
     <ClCompile Include="src\Linha.cpp" />
     <ClCompile Include="src\ListaDeCoresRGB.cpp" />
@@ -163,8 +163,8 @@
     <ClCompile Include="src\Temporizador.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BlockSpasce.h" />
     <ClInclude Include="src\AABB.h" />
+    <ClInclude Include="src\BlockSpasce.h" />
     <ClInclude Include="src\CollisionChecker.h" />
     <ClInclude Include="src\Linha.h" />
     <ClInclude Include="src\ListaDeCoresRGB.h" />

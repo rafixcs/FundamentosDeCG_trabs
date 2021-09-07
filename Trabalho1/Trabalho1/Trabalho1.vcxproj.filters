@@ -36,7 +36,7 @@
     <ClCompile Include="src\AABB.cpp">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
-    <ClCompile Include="BlockSpasce.cpp">
+    <ClCompile Include="src\BlockSpasce.cpp">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,7 +62,7 @@
     <ClInclude Include="src\AABB.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
-    <ClInclude Include="BlockSpasce.h">
+    <ClInclude Include="src\BlockSpasce.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
   </ItemGroup>
