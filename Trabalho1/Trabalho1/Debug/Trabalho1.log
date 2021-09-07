@@ -1,2 +1,13 @@
-﻿  Trabalho1.vcxproj -> E:\PUCRS\21-2\FundamentosCG\FundamentosDeCG_trabs\Trabalho1\Debug\Trabalho1.exe
+﻿  BlockSpasce.cpp
+E:\PUCRS\21-2\FundamentosCG\FundamentosDeCG_trabs\Trabalho1\Trabalho1\src\BlockSpasce.cpp(12,74): warning C4244: 'inicializando': conversão de 'float' para 'int', possível perda de dados
+E:\PUCRS\21-2\FundamentosCG\FundamentosDeCG_trabs\Trabalho1\Trabalho1\src\BlockSpasce.cpp(16,17): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
+E:\PUCRS\21-2\FundamentosCG\FundamentosDeCG_trabs\Trabalho1\Trabalho1\src\BlockSpasce.cpp(29,17): warning C4244: '=': conversão de 'float' para 'int', possível perda de dados
+  InterseccaoEntreTodasAsLinhas.cpp
+E:\PUCRS\21-2\FundamentosCG\FundamentosDeCG_trabs\Trabalho1\Trabalho1\src\InterseccaoEntreTodasAsLinhas.cpp(210,31): warning C4018: '<': incompatibilidade de signed/unsigned
+E:\PUCRS\21-2\FundamentosCG\FundamentosDeCG_trabs\Trabalho1\Trabalho1\src\InterseccaoEntreTodasAsLinhas.cpp(213,37): warning C4018: '<': incompatibilidade de signed/unsigned
+  Linha.cpp
+E:\PUCRS\21-2\FundamentosCG\FundamentosDeCG_trabs\Trabalho1\Trabalho1\src\Linha.cpp(27,30): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+E:\PUCRS\21-2\FundamentosCG\FundamentosDeCG_trabs\Trabalho1\Trabalho1\src\Linha.cpp(28,30): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+  Gerando Código...
+  Trabalho1.vcxproj -> E:\PUCRS\21-2\FundamentosCG\FundamentosDeCG_trabs\Trabalho1\Debug\Trabalho1.exe
           1 arquivo(s) copiado(s).

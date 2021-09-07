@@ -12,10 +12,15 @@
 using namespace std;
 
 #ifdef WIN32
-#include <windows.h>
-#include <GL/freeglut.h>
+    #include <windows.h>
+
+    #ifdef CODEBLOCKS
+        #include <glut.h>
+    #else
+        #include <GL/freeglut.h>
+    #endif // CODEBLOCKS
 #else
-#include <sys/time.h>
+    #include <sys/time.h>
 #endif
 
 #ifdef __APPLE__

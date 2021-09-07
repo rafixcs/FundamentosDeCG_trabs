@@ -14,8 +14,13 @@ using namespace std;
 
 
 #ifdef WIN32
-#include <windows.h>
-#include <GL/freeglut.h>
+    #include <windows.h>
+
+    #ifdef CODEBLOCKS
+        #include <glut.h>
+    #else
+        #include <GL/freeglut.h>
+    #endif // CODEBLOCKS
 #endif
 
 #ifdef __APPLE__
@@ -48,4 +53,4 @@ public:
     void LePoligono(const char *nome);
 };
 
-#endif 
+#endif

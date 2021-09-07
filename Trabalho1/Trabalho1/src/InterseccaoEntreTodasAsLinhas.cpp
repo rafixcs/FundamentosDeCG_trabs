@@ -3,32 +3,36 @@
 // COMPUTAÇÃO GRÁFICA
 //
 // Teste de colisão em OpenGL
-//       
+//
 // Marcio Sarroglia Pinho
 // pinho@inf.pucrs.br
 // **********************************************************************
 #include <iostream>
 #include <iomanip>
 #include <cmath>
-#include <ctime>  
-   
+#include <ctime>
+
 using namespace std;
 
 #ifdef WIN32
-#include <windows.h>
-#include <GL/freeglut.h>
+    #include <windows.h>
+    #ifdef CODEBLOCKS
+        #include <glut.h>
+    #else
+        #include <GL/freeglut.h>
+    #endif // CODEBLOCKS
 #else
-#include <sys/time.h>
+    #include <sys/time.h>
 #endif
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #endif
-     
+
 #ifdef __linux__
 #include <glut.h>
 #endif
- 
+
 #include "Ponto.h"
 #include "Linha.h"
 #include "AABB.h"
@@ -68,18 +72,18 @@ void init(void)
 
     // Define a cor do fundo da tela (BRANCO)
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    
+
     srand(unsigned(time(NULL)));
-    
+
     for (int i = 0; i < N_LINHAS; i++)
     {
         Linhas[i].geraLinha(MAX_X, TAM_MAX);
         blocksSpaces.InsertLine(Linhas[i], i);
     }
-    
+
     // Use as a breakpoint to verify the object data
     // before running the whole program
-    blocksSpaces;
+    //blocksSpaces;
 }
 
 // **********************************************************************
@@ -162,18 +166,18 @@ void DesenhaCenario()
 {
     Ponto PA, PB, PC, PD;
     ContChamadas = ContadorInt = ContBBxHit = 0;
-    
+
     // Desenha as linhas do cenário
     glLineWidth(1);
     glColor3f(1,0,0);
-    
-    if (BBX_TEST) 
+
+    if (BBX_TEST)
     {
         for(int i=0; i< N_LINHAS; i++)
-        {            
+        {
             for(int j=i+1; j< N_LINHAS; j++)
-            {                
-                ContChamadas++;                      
+            {
+                ContChamadas++;
                 if (CollisionChecker::CheckCollisionBoxes(Linhas[i].aabb, Linhas[j].aabb))
                 {
                     ContBBxHit++;
@@ -190,28 +194,28 @@ void DesenhaCenario()
                         Linhas[j].desenhaLinha();
                     }
                 }
-            
+
             }
-            
+
             if (MOSTRA_BBX)
             {
                 glColor3f(0.f, 0.f, 0.f);
                 Linhas[i].aabb->DrawBox();
                 glColor3f(1, 0, 0);
             }
-        }                   
+        }
     }
     else if (SECTIONS_TEST)
-    {   
+    {
         int teste_a = 0;
         int teste_b = 0;
         for (auto lines_indexes : blocksSpaces.GetAllBlocks())
         {
             for (int i = 0; i < lines_indexes.size(); i++)
-            {                
+            {
                 teste_a = lines_indexes[i];
                 for (int j = i+1; j < lines_indexes.size(); j++)
-                {                                        
+                {
                     ContChamadas++;
                     teste_b = lines_indexes[j];
                     if (CollisionChecker::CheckCollisionBoxes(Linhas[teste_a].aabb, Linhas[teste_b].aabb))
@@ -265,10 +269,10 @@ void display( void )
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-        
+
     DesenhaLinhas();
     DesenhaCenario();
-    
+
     glutSwapBuffers();
 
     if (RESTART)
@@ -293,7 +297,7 @@ void animate()
     AccumDeltaT += dt;
     TempoTotal += dt;
     nFrames++;
-    
+
     if (AccumDeltaT > 1.0/30) // fixa a atualização da tela em 30
     {
         AccumDeltaT = 0;
@@ -317,7 +321,7 @@ void animate()
 // **********************************************************************
 void keyboard ( unsigned char key, int x, int y )
 {
-    
+
     switch ( key )
     {
     case 27:        // Termina o programa qdo
@@ -349,7 +353,7 @@ void keyboard ( unsigned char key, int x, int y )
         while (NBlocksSpaces < 2 || NBlocksSpaces > 50)
         {
             std::cout << "Invalid value. Try again..." << std::endl;
-            std::cin >> NBlocksSpaces;            
+            std::cin >> NBlocksSpaces;
         }
         RESTART = true;
         break;
@@ -388,16 +392,16 @@ void arrow_keys ( int a_keys, int x, int y )
     switch ( a_keys )
     {
     case GLUT_KEY_UP:       // Se pressionar UP
-        
+
         break;
     case GLUT_KEY_DOWN:     // Se pressionar DOWN
-        
+
         break;
     case GLUT_KEY_LEFT:       // Se pressionar LEFT
-        
+
         break;
     case GLUT_KEY_RIGHT:     // Se pressionar RIGHT
-        
+
         break;
     default:
         break;
@@ -440,7 +444,7 @@ int  main ( int argc, char** argv )
     // for necessário redesenhar a janela
     glutDisplayFunc ( display );
     glutIdleFunc ( animate );
-    
+
     // Define que o tratador de evento para
     // o redimensionamento da janela. A funcao "reshape"
     // será chamada automaticamente quando
