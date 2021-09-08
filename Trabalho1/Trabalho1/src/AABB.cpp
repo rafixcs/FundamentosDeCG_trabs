@@ -5,7 +5,8 @@ AABB::AABB()
 {
 	this->width = 0.f;
 	this->height = 0.f;
-	this->_bounding_box = std::make_unique<Poligono>();
+	//this->_bounding_box = make_unique<Poligono>();
+	//this->_bounding_box = nullptr;
 }
 
 AABB::AABB(float x1, float y1, float x2, float y2)
@@ -23,7 +24,7 @@ AABB::AABB(float x1, float y1, float x2, float y2)
 
 	sign_w = (x1 < x2) ? 1.f : -1.f;
 	sign_h = (y1 < y2) ? 1.f : -1.f;
-	
+
 	this->width = abs(x1 - x2) * sign_w;
 	this->height = abs(y1 - y2) * sign_h;
 
@@ -31,18 +32,19 @@ AABB::AABB(float x1, float y1, float x2, float y2)
 	this->center.y = y1 + (this->height / 2.f);
 	this->midLen.x = abs(this->width / 2.f);
 	this->midLen.y = abs(this->height / 2.f);
-	
+
 	this->ResetPoligon();
 }
 
 AABB::~AABB()
 {
 	// Do nothing
+	//delete this->_bounding_box;
 }
 
 void AABB::DrawBox()
 {
-	this->_bounding_box->desenhaPoligono();
+	this->_bounding_box.desenhaPoligono();
 }
 
 void AABB::SetAABB(Ponto A, Ponto B)
@@ -66,7 +68,7 @@ void AABB::SetAABB(Ponto A, Ponto B)
 		this->width = (A.x - B.x) * sign_w;
 		this->height = (A.y - B.y) * sign_h;
 
-		this->ResetPoligon();		
+		this->ResetPoligon();
 	}
 }
 
@@ -80,10 +82,14 @@ void AABB::ResetPoligon()
 	iy.x = this->p1_bbx.x + this->width;
 	iy.y = this->p1_bbx.y;
 
-	this->_bounding_box.reset(new Poligono());
-	this->_bounding_box->insereVertice(this->p1_bbx);
-	this->_bounding_box->insereVertice(fx);
-	this->_bounding_box->insereVertice(this->p2_bbx);
-	this->_bounding_box->insereVertice(iy);
+	//this->_bounding_box.reset(new Poligono());
+	/*if (this->_bounding_box != nullptr)
+		delete this->_bounding_box;
+	this->_bounding_box = new Poligono();*/
+
+	this->_bounding_box.insereVertice(this->p1_bbx);
+	this->_bounding_box.insereVertice(fx);
+	this->_bounding_box.insereVertice(this->p2_bbx);
+	this->_bounding_box.insereVertice(iy);
 
 }

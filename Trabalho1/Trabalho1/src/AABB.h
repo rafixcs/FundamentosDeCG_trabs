@@ -9,7 +9,8 @@
 class AABB 
 {
 private:	
-	unique_ptr<Poligono> _bounding_box;
+	//unique_ptr<Poligono> _bounding_box;
+	Poligono _bounding_box;
 
 public:
 	Ponto p1_bbx;

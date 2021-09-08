@@ -7,7 +7,8 @@
 
 Linha::Linha()
 {
-    this->aabb.reset();
+    //this->aabb.reset();
+    this->aabb = nullptr;
     this->x1 = 0;
     this->y1 = 0;
     this->x2 = 0;
@@ -15,7 +16,8 @@ Linha::Linha()
 }
 
 Linha::~Linha()
-{    
+{
+    delete this->aabb;
 }
 
 void Linha::geraLinha(int limite, int TamMax)
@@ -23,13 +25,13 @@ void Linha::geraLinha(int limite, int TamMax)
     float deltaX,deltaY;
     int sign_w = 0;
     int sign_h = 0;
-        
+
     x1 = (rand() % limite*10)/10.0;
     y1 = (rand() % limite*10)/10.0;
-    
+
     deltaX = (rand() % limite)/(float)limite;
     deltaY = (rand() % limite)/(float)limite;
-    
+
     if (rand() % 2)
     {
         x2 = x1 + deltaX * TamMax;
@@ -46,13 +48,16 @@ void Linha::geraLinha(int limite, int TamMax)
         y2 = y1 + deltaY * TamMax;
         y2 = (y2 > 500.f) ? 500.f : y2;
     }
-    else 
+    else
     {
         y2 = y1 - deltaY * TamMax;
         y2 = (y2 < 0.f) ? 0.f : y2;
     }
 
-    this->aabb.reset(new AABB(x1, y1, x2, y2));
+    //this->aabb.reset(new AABB(x1, y1, x2, y2));
+    if (this->aabb != nullptr)
+        delete this->aabb;
+    this->aabb = new AABB(x1, y1, x2, y2);
 }
 
 

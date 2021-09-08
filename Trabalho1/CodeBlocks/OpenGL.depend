@@ -338,3 +338,100 @@
 	<windows.h>
 	<sys/time.h>
 
+1631028971 source:e:\pucrs\21-2\fundamentoscg\fundamentosdecg_trabs\trabalho1\trabalho1\src\blockspasce.cpp
+	"BlockSpasce.h"
+
+1631029722 e:\pucrs\21-2\fundamentoscg\fundamentosdecg_trabs\trabalho1\trabalho1\src\blockspasce.h
+	<vector>
+	<memory>
+	"Linha.h"
+
+1631041111 e:\pucrs\21-2\fundamentoscg\fundamentosdecg_trabs\trabalho1\trabalho1\src\linha.h
+	<windows.h>
+	<glut.h>
+	<GL/freeglut.h>
+	<GLUT/glut.h>
+	"AABB.h"
+	<memory>
+
+1298986600 e:\pucrs\21-2\fundamentoscg\fundamentosdecg_trabs\trabalho1\codeblocks\gl\glut.h
+	"freeglut.h"
+
+1298986600 e:\pucrs\21-2\fundamentoscg\fundamentosdecg_trabs\trabalho1\codeblocks\gl\freeglut.h
+	"freeglut_std.h"
+	"freeglut_ext.h"
+
+1298986600 e:\pucrs\21-2\fundamentoscg\fundamentosdecg_trabs\trabalho1\codeblocks\gl\freeglut_std.h
+	<windows.h>
+	<GL/gl.h>
+	<GL/glu.h>
+
+1298986600 e:\pucrs\21-2\fundamentoscg\fundamentosdecg_trabs\trabalho1\codeblocks\gl\freeglut_ext.h
+
+1631135114 e:\pucrs\21-2\fundamentoscg\fundamentosdecg_trabs\trabalho1\trabalho1\src\aabb.h
+	<memory>
+	"Ponto.h"
+	"Poligono.h"
+
+1631041102 e:\pucrs\21-2\fundamentoscg\fundamentosdecg_trabs\trabalho1\trabalho1\src\poligono.h
+	<iostream>
+	<windows.h>
+	<glut.h>
+	<GL/freeglut.h>
+	<GLUT/glut.h>
+	<glut.h>
+	"Ponto.h"
+	<vector>
+
+1631042495 source:e:\pucrs\21-2\fundamentoscg\fundamentosdecg_trabs\trabalho1\trabalho1\src\interseccaoentretodasaslinhas.cpp
+	<iostream>
+	<iomanip>
+	<cmath>
+	<ctime>
+	<windows.h>
+	<glut.h>
+	<GL/freeglut.h>
+	<sys/time.h>
+	<GLUT/glut.h>
+	<glut.h>
+	"Ponto.h"
+	"Linha.h"
+	"AABB.h"
+	"CollisionChecker.h"
+	"Temporizador.h"
+	"BlockSpasce.h"
+
+1631041198 e:\pucrs\21-2\fundamentoscg\fundamentosdecg_trabs\trabalho1\trabalho1\src\collisionchecker.h
+	<memory>
+	<math.h>
+	"AABB.h"
+
+1629992458 source:e:\pucrs\21-2\fundamentoscg\fundamentosdecg_trabs\trabalho1\trabalho1\src\linha.cpp
+	<cstdlib>
+	"Linha.h"
+	"AABB.h"
+
+1629393925 source:e:\pucrs\21-2\fundamentoscg\fundamentosdecg_trabs\trabalho1\trabalho1\src\listadecoresrgb.cpp
+	"ListaDeCoresRGB.h"
+
+1631041169 e:\pucrs\21-2\fundamentoscg\fundamentosdecg_trabs\trabalho1\trabalho1\src\listadecoresrgb.h
+	<iostream>
+	<cmath>
+	<ctime>
+	<fstream>
+	<windows.h>
+	<glut.h>
+	<GL/freeglut.h>
+	<sys/time.h>
+	<GLUT/glut.h>
+	<glut.h>
+
+1629393925 source:e:\pucrs\21-2\fundamentoscg\fundamentosdecg_trabs\trabalho1\trabalho1\src\poligono.cpp
+	<iostream>
+	<fstream>
+	"Poligono.h"
+
+1631135181 source:e:\pucrs\21-2\fundamentoscg\fundamentosdecg_trabs\trabalho1\trabalho1\src\aabb.cpp
+	"AABB.h"
+	"CollisionChecker.h"
+

@@ -23,7 +23,8 @@
 class Linha
 {
 public:
-	std::unique_ptr<AABB> aabb;
+	//std::unique_ptr<AABB> aabb;
+	AABB * aabb;
 
 	float x1;
 	float y1;
