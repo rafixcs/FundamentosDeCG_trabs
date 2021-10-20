@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Arquivos de Configuracao">
+      <UniqueIdentifier>{9996479c-ab90-42af-a7a9-be06cc6977ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AnimacaoComBezier.cpp">
@@ -28,6 +31,12 @@
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
     <ClCompile Include="src\Temporizador.cpp">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Curvas.cpp">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Labirinto.cpp">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,5 +56,19 @@
     <ClInclude Include="src\Temporizador.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
+    <ClInclude Include="src\Curvas.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Labirinto.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="config\Retangulo.txt">
+      <Filter>Arquivos de Configuracao</Filter>
+    </Text>
+    <Text Include="config\Curvas.txt">
+      <Filter>Arquivos de Configuracao</Filter>
+    </Text>
   </ItemGroup>
 </Project>

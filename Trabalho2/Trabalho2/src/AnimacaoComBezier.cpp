@@ -23,7 +23,7 @@ using namespace std;
 
 #ifdef WIN32
 #include <windows.h>
-#include <GL/freeglut.h>
+#include <glut.h>
 #else
 #include <sys/time.h>
 #endif
@@ -98,7 +98,7 @@ void init()
     // Define a cor do fundo da tela (AZUL)
     glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
     
-    Quadrado.LePoligono("src/Retangulo.txt");
+    Quadrado.LePoligono("Retangulo.txt");
     
     Min = Ponto (-20, -20);
     Max = Ponto (20, 20);

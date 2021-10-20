@@ -145,17 +145,25 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\AnimacaoComBezier.cpp" />
+    <ClCompile Include="src\Curvas.cpp" />
     <ClCompile Include="src\Instancia.cpp" />
+    <ClCompile Include="src\Labirinto.cpp" />
     <ClCompile Include="src\Poligono.cpp" />
     <ClCompile Include="src\Ponto.cpp" />
     <ClCompile Include="src\Temporizador.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Curvas.h" />
+    <ClInclude Include="src\Labirinto.h" />
     <ClInclude Include="src\Faixas.h" />
     <ClInclude Include="src\Instancia.h" />
     <ClInclude Include="src\Poligono.h" />
     <ClInclude Include="src\Ponto.h" />
     <ClInclude Include="src\Temporizador.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="config\Curvas.txt" />
+    <Text Include="config\Retangulo.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

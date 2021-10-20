@@ -1,12 +1,1 @@
-﻿  AnimacaoComBezier.cpp
-C:\Users\rafae\Dev\cpp\FundamentosDeCG_trabs\Trabalho2\Trabalho2\src\AnimacaoComBezier.cpp(73,18): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
-C:\Users\rafae\Dev\cpp\FundamentosDeCG_trabs\Trabalho2\Trabalho2\src\AnimacaoComBezier.cpp(73,29): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
-C:\Users\rafae\Dev\cpp\FundamentosDeCG_trabs\Trabalho2\Trabalho2\src\AnimacaoComBezier.cpp(73,52): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
-C:\Users\rafae\Dev\cpp\FundamentosDeCG_trabs\Trabalho2\Trabalho2\src\AnimacaoComBezier.cpp(73,63): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
-C:\Users\rafae\Dev\cpp\FundamentosDeCG_trabs\Trabalho2\Trabalho2\src\AnimacaoComBezier.cpp(73,75): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
-C:\Users\rafae\Dev\cpp\FundamentosDeCG_trabs\Trabalho2\Trabalho2\src\AnimacaoComBezier.cpp(73,77): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
-C:\Users\rafae\Dev\cpp\FundamentosDeCG_trabs\Trabalho2\Trabalho2\src\AnimacaoComBezier.cpp(139,55): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
-C:\Users\rafae\Dev\cpp\FundamentosDeCG_trabs\Trabalho2\Trabalho2\src\AnimacaoComBezier.cpp(140,55): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
-C:\Users\rafae\Dev\cpp\FundamentosDeCG_trabs\Trabalho2\Trabalho2\src\AnimacaoComBezier.cpp(197,30): warning C4244: '+=': conversão de 'double' para 'float', possível perda de dados
-  Trabalho2.vcxproj -> C:\Users\rafae\Dev\cpp\FundamentosDeCG_trabs\Trabalho2\Debug\Trabalho2.exe
-          1 arquivo(s) copiado(s).
+﻿
