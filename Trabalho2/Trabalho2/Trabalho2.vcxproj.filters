@@ -70,5 +70,6 @@
     <Text Include="config\Curvas.txt">
       <Filter>Arquivos de Configuracao</Filter>
     </Text>
+    <Text Include="config\Pontos.txt" />
   </ItemGroup>
 </Project>

@@ -7,7 +7,7 @@
 namespace Bezier
 {
 	class Labirinto
-	{
+	{	
 	public:
 		std::vector<Curvas> curvasLabirinto;
 		
@@ -15,6 +15,6 @@ namespace Bezier
 		Labirinto(std::string fileName);
 		~Labirinto();
 
-		void Initialize(std::string fileName);
+		void Initialize();
 	};
 }

@@ -21,9 +21,9 @@
 
 using namespace std;
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
-#include <glut.h>
+#include <GL/freeglut.h>
 #else
 #include <sys/time.h>
 #endif
@@ -38,11 +38,9 @@ using namespace std;
 
 #include "Ponto.h"
 #include "Poligono.h"
-
-
-
-
 #include "Temporizador.h"
+#include "Labirinto.h"
+
 Temporizador T;
 double AccumDeltaT=0;
 
@@ -62,10 +60,11 @@ float angulo=0.0;
 float tempo;// tempo em segundos para atravessar a tela
 float TempoDaAnimacao;
 
-Ponto Curva1[3];
+//Ponto Curva1[3];
+Bezier::Labirinto labirinto;
 
 // **********************************************************************
-Ponto CalculaBezier3(Ponto PC[], double t)
+Ponto CalculaBezier3(Ponto PC[3], double t)
 {
     Ponto P;
     double UmMenosT = 1-t;
@@ -79,14 +78,18 @@ void TracaBezier3Pontos()
     double t=0.0;
     double DeltaT = 1.0/10;
     //cout << "DeltaT: " << DeltaT << endl;
-    glBegin(GL_LINE_STRIP);
-    while(t<1.0)
+    for (int i = 0; i < labirinto.curvasLabirinto.size(); i++)
     {
-        Ponto P = CalculaBezier3(Curva1, t);
-        glVertex2f(P.x, P.y);
-        t += DeltaT;
+        t = 0.f;
+        glBegin(GL_LINE_STRIP);
+        while(t<1.0)
+        {
+            Ponto P = CalculaBezier3(labirinto.curvasLabirinto[i].pontos, t);
+            glVertex2f(P.x, P.y);
+            t += DeltaT;
+        }
+        glEnd();        
     }
-    glEnd();
 }
 // **********************************************************************
 //
@@ -98,7 +101,7 @@ void init()
     // Define a cor do fundo da tela (AZUL)
     glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
     
-    Quadrado.LePoligono("Retangulo.txt");
+    Quadrado.LePoligono("config/Retangulo.txt");
     
     Min = Ponto (-20, -20);
     Max = Ponto (20, 20);
@@ -112,11 +115,8 @@ void init()
     // No trabalho, este ’ndice [0] NAO pode ser hard-coded.
     Personagens[0].Velocidade.x = (Max.x - Min.x)/tempo;
     Personagens[0].Velocidade.y = (Max.y - Min.y)/tempo;
-
-    Curva1[0] = Ponto (-20,0);
-    Curva1[1] = Ponto (-15,30);
-    Curva1[2] = Ponto (0,0);
     
+    labirinto.Initialize();
 }
 
 double nFrames=0;
@@ -154,7 +154,7 @@ void AvancaComBezier()
         cout << "Tempo da Animacao: " << TempoDaAnimacao << " segundos." << endl;
         Personagens[0].Posicao = Ponto(0,0); // retorna o objeto a sua posicao inicial
     }
-    Personagens[0].Posicao = CalculaBezier3(Curva1,t);
+    //Personagens[0].Posicao = CalculaBezier3(Curva1,t);
 
 }
 // **********************************************************************
