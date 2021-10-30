@@ -41,6 +41,15 @@ void Ponto::soma(double x, double y, double z)
     this->z += z;
 }
 
+bool Ponto::operator==(const Ponto& P)
+{
+    return {
+        P.x == this->x &&
+        P.y == this->y &&
+        P.z == this->z
+    };
+}
+
 Ponto ObtemMaximo (Ponto P1, Ponto P2)
 {
     Ponto Max;

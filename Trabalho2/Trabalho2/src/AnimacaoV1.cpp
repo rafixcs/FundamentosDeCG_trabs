@@ -21,7 +21,7 @@
 
 using namespace std;
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #include <glut.h>
 #else
@@ -158,7 +158,7 @@ void AvancaPersonagens(double dt)
 void animate()
 {
     double dt;
-    dt = T.getDeltaT();
+    dt = T.getDeltaT() * 1.5;
     AccumDeltaT += dt;
     TempoTotal += dt;
     nFrames++;

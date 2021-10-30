@@ -40,6 +40,7 @@ using namespace std;
 #include "Poligono.h"
 #include "Temporizador.h"
 #include "Labirinto.h"
+#include "Bezier.h"
 
 Temporizador T;
 double AccumDeltaT=0;
@@ -60,31 +61,21 @@ float angulo=0.0;
 float tempo;// tempo em segundos para atravessar a tela
 float TempoDaAnimacao;
 
-//Ponto Curva1[3];
-Bezier::Labirinto labirinto;
+BezierStruct::Curva curvaAtual;
+BezierStruct::Labirinto labirinto;
 
 // **********************************************************************
-Ponto CalculaBezier3(Ponto PC[3], double t)
-{
-    Ponto P;
-    double UmMenosT = 1-t;
-    
-    P =  PC[0] * UmMenosT * UmMenosT + PC[1] * 2 * UmMenosT * t + PC[2] * t*t;
-    return P;
-}
-// **********************************************************************
-void TracaBezier3Pontos()
+void DesenhaLabirinto()
 {
     double t=0.0;
     double DeltaT = 1.0/10;
-    //cout << "DeltaT: " << DeltaT << endl;
     for (int i = 0; i < labirinto.curvasLabirinto.size(); i++)
     {
         t = 0.f;
         glBegin(GL_LINE_STRIP);
         while(t<1.0)
         {
-            Ponto P = CalculaBezier3(labirinto.curvasLabirinto[i].pontos, t);
+            Ponto P = BezierCalculo::Bezier::CalculaBezier3(labirinto.curvasLabirinto[i], 1, t);
             glVertex2f(P.x, P.y);
             t += DeltaT;
         }
@@ -106,40 +97,22 @@ void init()
     Min = Ponto (-20, -20);
     Max = Ponto (20, 20);
 
-    // No trabalho, este 地dice [0] NAO pode ser hard-coded.
-    
-    Personagens[0].Posicao = Ponto(0,0);
-    Personagens[0].Direcao = Ponto(1,0);
+    // No trabalho, este 地dice [0] NAO pode ser hard-coded.    
+    Personagens[0].posicao = Ponto(0,0);
+    Personagens[0].direcao = 1;
     
     tempo = 5;
     // No trabalho, este 地dice [0] NAO pode ser hard-coded.
-    Personagens[0].Velocidade.x = (Max.x - Min.x)/tempo;
-    Personagens[0].Velocidade.y = (Max.y - Min.y)/tempo;
+    Personagens[0].velocidade.x = (Max.x - Min.x)/tempo;
+    Personagens[0].velocidade.y = (Max.y - Min.y)/tempo;
     
     labirinto.Initialize();
+    labirinto.getAsCurva(curvaAtual, 0);
 }
 
 double nFrames=0;
 double TempoTotal=0;
 
-// **********************************************************************
-//
-// **********************************************************************
-void AvancaMRU(double dt)
-{
-    if (Personagens[0].Posicao.x >= Max.x)
-    {
-        animando = false;
-        cout << "Tempo da Animacao: " << TempoDaAnimacao << " segundos." << endl;
-        Personagens[0].Posicao = Ponto(0,0); // retorna o objeto a sua posicao inicial
-    }
-
-    // No trabalho, este 地dice [0] NAO pode ser hard-coded.
-    Ponto Deslocamento;
-    Deslocamento.x = dt * Personagens[0].Velocidade.x * Personagens[0].Direcao.x;
-    Deslocamento.y = dt * Personagens[0].Velocidade.y * Personagens[0].Direcao.y;
-    Personagens[0].Posicao = Personagens[0].Posicao + Deslocamento;
-}
 // **********************************************************************
 //
 // **********************************************************************
@@ -150,11 +123,11 @@ void AvancaComBezier()
     t = TempoDaAnimacao/tempo;
     if (t>1.0)
     {
-        animando = false;
         cout << "Tempo da Animacao: " << TempoDaAnimacao << " segundos." << endl;
-        Personagens[0].Posicao = Ponto(0,0); // retorna o objeto a sua posicao inicial
+        TempoDaAnimacao = 0.f;
+        labirinto.ProxCurva(curvaAtual, Personagens[0]);
     }
-    //Personagens[0].Posicao = CalculaBezier3(Curva1,t);
+    Personagens[0].posicao = BezierCalculo::Bezier::CalculaBezier3(curvaAtual, Personagens[0].direcao, t);
 
 }
 // **********************************************************************
@@ -162,9 +135,7 @@ void AvancaComBezier()
 // **********************************************************************
 void AvancaPersonagens(double dt)
 {
-    //AvancaMRU(dt);
     AvancaComBezier();
-    
 }
 // **********************************************************************
 //
@@ -280,16 +251,16 @@ void display( void )
                 glTranslatef(-Metade.x, -Metade.y, -Metade.z); // Muda o sistema de REF para o meio do objeto
 
                 // No trabalho, este 地dice [0] NAO pode ser hard-coded.
-                glTranslatef(Personagens[0].Posicao.x,
-                             Personagens[0].Posicao.y,
-                             Personagens[0].Posicao.z);  // posiciona o objeto
+                glTranslatef(Personagens[0].posicao.x,
+                             Personagens[0].posicao.y,
+                             Personagens[0].posicao.z);  // posiciona o objeto
                 //Posicoes[0].imprime(); cout << endl;
                 Quadrado.desenhaPoligono();
     glPopMatrix();
     
     glColor3f(1,0,0);
     glPointSize(3);
-    TracaBezier3Pontos();
+    DesenhaLabirinto();
     
     
 	glutSwapBuffers();
@@ -336,16 +307,16 @@ void keyboard ( unsigned char key, int x, int y )
         case '1':
             animando = true;
             TempoDaAnimacao = 0;
-            Personagens[0].Posicao = Ponto (Min.x,0);
-            Personagens[0].Direcao = Ponto (1,0);
-            cout << "Posicao Inicial: "; Personagens[0].Posicao.imprime(); cout << endl;
+            Personagens[0].posicao = Ponto (Min.x,0);
+            Personagens[0].direcao = 1;
+            cout << "Posicao Inicial: "; Personagens[0].posicao.imprime(); cout << endl;
             break;
         case '2':
             animando = true;
             TempoDaAnimacao = 0;
-            Personagens[0].Posicao = Ponto (Min.x,Min.y);
-            Personagens[0].Direcao  = Ponto (1,1);
-            cout << "Posicao Inicial: "; Personagens[0].Posicao.imprime(); cout << endl;
+            Personagens[0].posicao = Ponto (Min.x,Min.y);
+            Personagens[0].direcao  = -1;
+            cout << "Posicao Inicial: "; Personagens[0].posicao.imprime(); cout << endl;
             break;
 		default:
 			break;

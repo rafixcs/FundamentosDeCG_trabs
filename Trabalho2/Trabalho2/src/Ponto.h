@@ -22,6 +22,7 @@ public:
     void imprime();
     void multiplica(double x, double y, double z);
     void soma(double x, double y, double z);
+    bool operator==(const Ponto& P);
 } ;
 
 

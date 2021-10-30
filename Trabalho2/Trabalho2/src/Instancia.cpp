@@ -8,9 +8,6 @@
 
 #include "Instancia.h"
 
-
-void DesenhaPersonagem();
-void DesenhaRetangulo();
 // ***********************************************************
 //  void InstanciaPonto(Ponto3D *p, Ponto3D *out)
 //  Esta funcao calcula as coordenadas de um ponto no
@@ -51,7 +48,7 @@ void Instancia::desenha()
     // desenha a geometria do objeto
     
     glPushMatrix();
-    glTranslatef(Posicao.x, Posicao.y, 0);
+    glTranslatef(posicao.x, posicao.y, 0);
     glRotatef(rotacao, 0, 0, 1);
     Ponto PosicaoDoPersonagem;
     Ponto Origem (0,0,0);

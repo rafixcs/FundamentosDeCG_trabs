@@ -9,18 +9,21 @@
 
 #ifndef Instancia_hpp
 #define Instancia_hpp
+
 #include <iostream>
 using namespace std;
 
 #include "Poligono.h"
 
-class Instancia{
-    //Poligono *modelo;
+struct Instancia{
+    Ponto posicao;
+    Ponto escala;
+    Ponto velocidade;
     
-public:
-    Ponto Posicao, Escala, Direcao, Velocidade;
+    int direcao;
     float rotacao;
     int modelo;
+
     void desenha();
 };
 
