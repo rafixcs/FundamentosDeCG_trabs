@@ -56,14 +56,14 @@ Instancia::Instancia()
     this->proxsCurvas.clear();
 }
 
-void Instancia::Inicializa(Ponto& Max, Ponto& Min, std::string fileName)
+void Instancia::Inicializa(int curva, float t, Ponto& Max, Ponto& Min, std::string fileName)
 {
     this->carro.LePoligono(fileName.c_str());
     this->posicao = Ponto(0, 0);
     this->direcao = 1;
-    this->curvaAtual = 0;
+    this->curvaAtual = curva;
     this->bProxCurvaSel = false;
-    this->t = 0.f;
+    this->t = t;
     this->velocidade.x = (Max.x - Min.x) / 5;
     this->velocidade.y = (Max.y - Min.y) / 5;
     this->rotacao = 0.f;
@@ -74,13 +74,13 @@ void Instancia::Desenha()
     Ponto Metade;
     Ponto Min, Max;
 
-    glColor3f(0.f, 0.f, 0.f);
     glPushMatrix();
     {
         glTranslatef(this->posicao.x,
                     this->posicao.y,
                     this->posicao.z);  // posiciona o objeto
-        this->CalculaRotacao();
+        if (!(this->posicao == this->posicaoAnt))
+            this->CalculaRotacao();
         glRotated(this->rotacao, 0, 0, 1);
 
         this->carro.desenhaPoligono();

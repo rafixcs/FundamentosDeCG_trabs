@@ -18,9 +18,7 @@
 #include <ctime>
 #include <fstream>
 
-
 using namespace std;
-
 
 #ifdef _WIN32
     #include <windows.h>
@@ -43,17 +41,19 @@ using namespace std;
 #include "Labirinto.h"
 #include "Bezier.h"
 #include "Instancia.h"
+#include <random>
 
 Temporizador T;
 double AccumDeltaT=0;
 
 // Limites l—gicos da ‡rea de desenho
 Ponto Min, Max;
-#define QNT_PERSONAGENS 5
+#define QNT_PERSONAGENS 11
 Instancia personagens[QNT_PERSONAGENS];
 
 bool desenha = false;
 bool animando = false;
+bool startGame = false;
 
 float angulo=0.0;
 
@@ -94,16 +94,28 @@ void DesenhaLabirinto()
 void Init()
 {
     Ponto MinPoly, MaxPoly, Folga;
-
+    srand((unsigned)time(NULL));
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-    Min = Ponto (-20, -20);
-    Max = Ponto (20, 20);
-
-    for (int i = 0; i < QNT_PERSONAGENS; i++)
-        personagens[i].Inicializa(Max, Min, "config/Triangulo.txt");
+    Min = Ponto (-40, -40);
+    Max = Ponto (40, 40);
 
     labirinto.Initialize();
+
+    for (int i = 0; i < QNT_PERSONAGENS; i++)
+    {
+        if (i == 0)
+            personagens[i].Inicializa(0, 0, Max, Min, "config/Triangulo.txt");
+        else
+        {
+            personagens[i].Inicializa(
+                (rand() % (labirinto.curvasLabirinto.size()) - 1) + 1,
+                0.5f,
+                Max, Min,
+                "config/Triangulo.txt"
+            );
+        }
+    }
 }
 
 void AvancaComBezier(int index, double deltaTime)
@@ -129,12 +141,28 @@ void AvancaComBezier(int index, double deltaTime)
     );
 }
 
+void VerificaColisao()
+{
+    for (int i = 1; i < QNT_PERSONAGENS; i++)
+    {
+        if (personagens[0].curvaAtual == personagens[i].curvaAtual && startGame)
+        {
+            int t1 = (personagens[0].direcao > 0) ? personagens[0].t * 100 : (1 - personagens[0].t) * 100;
+            int t2 = (personagens[i].direcao > 0) ? personagens[i].t * 100 : (1 - personagens[i].t) * 100;
+            int total = abs(t1 - t2);
+            if (total < 2)
+                exit(0);            
+        }
+    }
+}
+
 void AvancaPersonagens(double dt)
 {
     for (int i = 0; i < QNT_PERSONAGENS; i++)
     {
         AvancaComBezier(i, dt);
     }
+    VerificaColisao();
 }
 
 void Animate()
@@ -164,7 +192,7 @@ void Animate()
     }
 }
 
-void Reshape( int w, int h )
+void Reshape(int w, int h)
 {
     // Reset the coordinate system before modifying
     glMatrixMode(GL_PROJECTION);
@@ -206,7 +234,7 @@ void RotacionaAoRedorDeUmPonto(float alfa, Ponto P)
     glTranslatef(-P.x, -P.y, -P.z);
 }
 
-void Display( void )
+void Display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -214,14 +242,21 @@ void Display( void )
     glLoadIdentity();
 
 	glLineWidth(3);
-	glColor3f(1,0,0);
+    glColor3f(1.f, 0.f, 0.f);
 
     DesenhaLabirinto();
 
     for (int i = 0; i < QNT_PERSONAGENS; i++)
+    {
+        if (i == 0)
+            glColor3f(0.75f, 0.3f, 0.5f);
+        else
+            glColor3f(0.f, 0.f, 0.f);
         personagens[i].Desenha();
+        //personagens[i].bbox.DrawBox();
+    }
 
-    glColor3f(1,0,0);
+    glColor3f(1.f, 0.f, 0.f);
     glPointSize(3);
 	glutSwapBuffers();
 }
@@ -245,7 +280,7 @@ void ContaTempo(double tempo)
 
 }
 
-void Keyboard ( unsigned char key, int x, int y )
+void Keyboard(unsigned char key, int x, int y)
 {
 
 	switch ( key )
@@ -258,6 +293,7 @@ void Keyboard ( unsigned char key, int x, int y )
             break;
         case 32:
             animando = !animando;
+            startGame = true;
             break;
         case 'x':
             personagens[0].TrocaProxCurva();
@@ -270,9 +306,9 @@ void Keyboard ( unsigned char key, int x, int y )
 	}
 }
 
-void ArrowKeysHandler ( int a_keys, int x, int y )
+void ArrowKeysHandler(int a_keys, int x, int y)
 {
-	switch ( a_keys )
+    switch (a_keys)
 	{
 		case GLUT_KEY_UP:       // Se pressionar UP
 			glutFullScreen ( ); // Vai para Full Screen
@@ -284,8 +320,8 @@ void ArrowKeysHandler ( int a_keys, int x, int y )
             angulo++;
             break;
 	    case GLUT_KEY_DOWN:     // Se pressionar UP reposiciona a janela
-            glutPositionWindow (50,50);
-			glutReshapeWindow ( 700, 500 );
+            glutPositionWindow(50, 50);
+            glutReshapeWindow(700, 500);
 			break;
 		default:
 			break;
@@ -293,7 +329,7 @@ void ArrowKeysHandler ( int a_keys, int x, int y )
 //    glutPostRedisplay();
 }
 
-int main ( int argc, char** argv )
+int main(int argc, char** argv)
 {
     cout << "Programa OpenGL" << endl;
 
@@ -306,7 +342,7 @@ int main ( int argc, char** argv )
 
     // Cria a janela na tela, definindo o nome da
     // que aparecera na barra de titulo da janela.
-    glutCreateWindow( "Primeiro Programa em OpenGL" );
+    glutCreateWindow("T2 Fundamentos de CG");
 
     // executa algumas inicializações
     Init();
@@ -315,7 +351,7 @@ int main ( int argc, char** argv )
     // o redesenho da tela. A funcao "display"
     // será chamada automaticamente quando
     // for necessário redesenhar a janela
-    glutDisplayFunc( Display );
+    glutDisplayFunc(Display);
 
     // Define que o tratador de evento para
     // o invalida‹o da tela. A funcao "display"
@@ -327,13 +363,13 @@ int main ( int argc, char** argv )
     // o redimensionamento da janela. A funcao "reshape"
     // será chamada automaticamente quando
     // o usuário alterar o tamanho da janela
-    glutReshapeFunc( Reshape );
+    glutReshapeFunc(Reshape);
 
     // Define que o tratador de evento para
     // as teclas. A funcao "keyboard"
     // será chamada automaticamente sempre
     // o usuário pressionar uma tecla comum
-    glutKeyboardFunc( Keyboard );
+    glutKeyboardFunc(Keyboard);
 
     // Define que o tratador de evento para
     // as teclas especiais(F1, F2,... ALT-A,
@@ -341,7 +377,7 @@ int main ( int argc, char** argv )
     // A funcao "arrow_keys" será chamada
     // automaticamente sempre o usuário
     // pressionar uma tecla especial
-    glutSpecialFunc( ArrowKeysHandler );
+    glutSpecialFunc(ArrowKeysHandler);
 
     // inicia o tratamento dos eventos
     glutMainLoop();

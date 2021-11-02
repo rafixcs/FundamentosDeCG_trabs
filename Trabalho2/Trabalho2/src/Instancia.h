@@ -36,7 +36,7 @@ typedef struct Instancia{
     vector<int> proxsCurvas;
 
     Instancia();
-    void Inicializa(Ponto& Max, Ponto& Min, std::string fileName);
+    void Inicializa(int curva, float t, Ponto& Max, Ponto& Min, std::string fileName);
     void Desenha();
     void AtualizaCurva();
     void TrocaProxCurva();

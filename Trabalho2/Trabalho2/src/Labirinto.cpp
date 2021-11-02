@@ -28,7 +28,7 @@ void Labirinto::Initialize()
 	Ponto p1;
 	Ponto p2;
 	Ponto p3;
-	float scale = 5.f;
+	float scale = 4.f;
 
 	pontos.clear();
 	this->curvasLabirinto.clear();
@@ -113,7 +113,7 @@ void Labirinto::ProxsCurva(Instancia& personagem)
 		labIndexCont++;
 	}
 	
-	std::uniform_int_distribution<> distr(0, personagem.proxsCurvas.size()-1);
+	std::uniform_int_distribution<> distr(0, personagem.proxsCurvas.size() - 1);
 	randIndex = distr(gen);
 	tempCurva = personagem.proxsCurvas[randIndex];
 
