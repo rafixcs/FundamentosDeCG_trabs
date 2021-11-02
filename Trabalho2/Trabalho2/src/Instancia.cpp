@@ -7,6 +7,7 @@
 //
 
 #include "Instancia.h"
+#include "Bezier.h"
 
 // ***********************************************************
 //  void InstanciaPonto(Ponto3D *p, Ponto3D *out)
@@ -42,20 +43,101 @@ Ponto InstanciaPonto(Ponto P)
     return temp;
 }
 
-void Instancia::desenha()
+Instancia::Instancia()
 {
-    // aplica as transformacoes geometricas no modelo
-    // desenha a geometria do objeto
-    
+    this->direcao = 0;
+    this->modelo = 0;
+    this->rotacao = 0;
+    this->t = 0.f;
+    this->bProxCurvaSel = false;
+    this->curvaAtual = 0;
+    this->proxCurva = 0;
+    this->proxDirecao = 0;
+    this->proxsCurvas.clear();
+}
+
+void Instancia::Inicializa(Ponto& Max, Ponto& Min, std::string fileName)
+{
+    this->carro.LePoligono(fileName.c_str());
+    this->posicao = Ponto(0, 0);
+    this->direcao = 1;
+    this->curvaAtual = 0;
+    this->bProxCurvaSel = false;
+    this->t = 0.f;
+    this->velocidade.x = (Max.x - Min.x) / 5;
+    this->velocidade.y = (Max.y - Min.y) / 5;
+    this->rotacao = 0.f;
+}
+
+void Instancia::Desenha()
+{
+    Ponto Metade;
+    Ponto Min, Max;
+
+    glColor3f(0.f, 0.f, 0.f);
     glPushMatrix();
-    glTranslatef(posicao.x, posicao.y, 0);
-    glRotatef(rotacao, 0, 0, 1);
-    Ponto PosicaoDoPersonagem;
-    Ponto Origem (0,0,0);
-    InstanciaPonto(Origem, PosicaoDoPersonagem);
-    //PosicaoDoPersonagem.imprime(); cout << endl;
-    
-    //DesenhaPersonagem();
+    {
+        glTranslatef(this->posicao.x,
+                    this->posicao.y,
+                    this->posicao.z);  // posiciona o objeto
+        this->CalculaRotacao();
+        glRotated(this->rotacao, 0, 0, 1);
+
+        this->carro.desenhaPoligono();
+
+        this->carro.desenhaPoligono();
+    }    
     glPopMatrix();
 }
 
+void Instancia::AtualizaCurva()
+{
+    this->curvaAtual = this->proxCurva;
+    this->direcao = this->proxDirecao;
+    this->proxsCurvas.clear();
+}
+
+void Instancia::TrocaProxCurva()
+{
+    if (this->proxsCurvas.size() > 0)
+    {
+        std::vector<int>::iterator itr = std::find(
+            this->proxsCurvas.begin(), 
+            this->proxsCurvas.end(), 
+            this->proxCurva
+        );
+
+        int tempProxIndex = static_cast<int>(std::distance(this->proxsCurvas.begin(), itr));
+
+        if (tempProxIndex++ != this->proxsCurvas.size()-1)
+        {
+            this->proxCurva = this->proxsCurvas[tempProxIndex++];
+        }
+        else
+        {
+            this->proxCurva = this->proxsCurvas[0];
+        }
+    }
+}
+
+void Instancia::TrocaDirecao()
+{
+    this->direcao *= -1;
+    this->t = 1 - this->t;
+    if (this->t < 0.5)
+    {
+        this->bProxCurvaSel = false;
+        this->proxsCurvas.clear();
+    }
+}
+
+void Instancia::CalculaRotacao()
+{
+    Ponto vDir;
+    vDir = this->posicao - this->posicaoAnt;
+
+    this->rotacao = 180 / 3.1459265 * acos(vDir.escalar(Ponto(1,0,0)));
+    
+    if (vDir.y < 0.f)
+        rotacao *= -1;
+}

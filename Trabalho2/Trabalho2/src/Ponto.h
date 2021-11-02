@@ -22,7 +22,9 @@ public:
     void imprime();
     void multiplica(double x, double y, double z);
     void soma(double x, double y, double z);
+    float escalar(Ponto P);
     bool operator==(const Ponto& P);
+    Ponto operator* (Ponto P);
 } ;
 
 

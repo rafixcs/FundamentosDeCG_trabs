@@ -2,7 +2,7 @@
 #include <random>
 #include <fstream>
 
-using namespace BezierStruct;
+using namespace BezierLab;
 
 Labirinto::Labirinto()
 {
@@ -71,12 +71,15 @@ void Labirinto::getAsCurva(Curva& curva, const int& index)
 	curva.pontos[2] = this->curvasLabirinto[index].pontos[2];
 }
 
-void Labirinto::ProxCurva(Curva& curvaAtual, Instancia& personagem)
+void Labirinto::ProxsCurva(Instancia& personagem)
 {
-	std::vector<Curva> tempCurvas;
-	int randIndex = 0;
 	std::random_device rd;
 	std::mt19937 gen(rd());
+	int randIndex = 0;
+	int labIndexCont = 0;
+	int tempCurva = 0;
+
+	personagem.proxsCurvas.clear();
 
 	for (auto& cv : this->curvasLabirinto)
 	{
@@ -84,55 +87,60 @@ void Labirinto::ProxCurva(Curva& curvaAtual, Instancia& personagem)
 		{
 			for (int j = 0; j < BEZIER_POINTS; j+=2)
 			{
-				if (curvaAtual == cv)
+				if (this->curvasLabirinto[personagem.curvaAtual] == cv)
 				{
 					break;
 				}
 				else
 				{
-					if (curvaAtual.pontos[i] == cv.pontos[j])
+					if (this->curvasLabirinto[personagem.curvaAtual].pontos[i] == cv.pontos[j])
 					{
-						if (personagem.direcao > 0 && curvaAtual.pontos[2] == cv.pontos[j])
+						if (personagem.direcao > 0 && this->curvasLabirinto[personagem.curvaAtual].pontos[2] == cv.pontos[j])
 						{
 							cv.starToEnd = true;
-							tempCurvas.push_back(cv);
+							personagem.proxsCurvas.push_back(labIndexCont);
 						}
-						else if (personagem.direcao < 0 && curvaAtual.pontos[0] == cv.pontos[j])
+						else if (personagem.direcao < 0 && this->curvasLabirinto[personagem.curvaAtual].pontos[0] == cv.pontos[j])
 						{
 							cv.starToEnd = false;
-							tempCurvas.push_back(cv);
+							personagem.proxsCurvas.push_back(labIndexCont);
 						}
 						break;
 					}
 				}
 			}
 		}
+		labIndexCont++;
 	}
 	
-	std::uniform_int_distribution<> distr(0, tempCurvas.size()-1);
+	std::uniform_int_distribution<> distr(0, personagem.proxsCurvas.size()-1);
 	randIndex = distr(gen);
+	tempCurva = personagem.proxsCurvas[randIndex];
 
-	if (tempCurvas[randIndex].starToEnd)
+	if (this->curvasLabirinto[tempCurva].starToEnd)
 	{
-		if (tempCurvas[randIndex].pontos[2] == curvaAtual.pontos[0])
+		if ((this->curvasLabirinto[personagem.curvaAtual].pontos[2] == this->curvasLabirinto[tempCurva].pontos[0])
+			|| (this->curvasLabirinto[personagem.curvaAtual].pontos[0] == this->curvasLabirinto[tempCurva].pontos[2]))
 		{
-			personagem.direcao = 1;
+			personagem.proxDirecao = 1;
 		}
 		else
 		{
-			personagem.direcao = -1;
+			personagem.proxDirecao = -1;
 		}
 	}
 	else
 	{
-		if (tempCurvas[randIndex].pontos[0] == curvaAtual.pontos[0])
+		if ((this->curvasLabirinto[tempCurva].pontos[0] == this->curvasLabirinto[personagem.curvaAtual].pontos[0])
+			|| (this->curvasLabirinto[tempCurva].pontos[2] == this->curvasLabirinto[personagem.curvaAtual].pontos[2]))
 		{
-			personagem.direcao = 1;
+			personagem.proxDirecao = 1;
 		}
 		else
 		{
-			personagem.direcao = -1;
+			personagem.proxDirecao = -1;
 		}
 	}
-	curvaAtual = tempCurvas[randIndex];
+
+	personagem.proxCurva = tempCurva;
 }

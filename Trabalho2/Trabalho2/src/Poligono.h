@@ -12,18 +12,19 @@
 #include <iostream>
 using namespace std;
 
+#define CB 1
 
 #ifdef _WIN32
-#include <windows.h>
-#include <GL/freeglut.h>
+    #include <windows.h>
+    #include <GL/freeglut.h>
 #endif
 
 #ifdef __APPLE__
-#include <GLUT/glut.h>
+    #include <GLUT/glut.h>
 #endif
 
 #ifdef __linux__
-#include <glut.h>
+    #include <glut.h>
 #endif
 
 #include "Ponto.h"
@@ -31,6 +32,7 @@ using namespace std;
 
 class Poligono
 {
+private:
     vector <Ponto> Vertices;
     Ponto Min, Max;
 public:
@@ -47,4 +49,4 @@ public:
     void LePoligono(const char *nome);
 };
 
-#endif 
+#endif

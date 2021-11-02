@@ -3,7 +3,7 @@
 #include "Ponto.h"
 #define BEZIER_POINTS 3
 
-namespace BezierStruct
+namespace BezierLab
 {
 	struct Curva
 	{

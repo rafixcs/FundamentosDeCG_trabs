@@ -41,6 +41,13 @@ void Ponto::soma(double x, double y, double z)
     this->z += z;
 }
 
+float Ponto::escalar(Ponto P)
+{
+    float A = (this->x * P.x) + (this->y * P.y) + (this->z * P.z);
+    float B = sqrt((pow(this->x, 2) + pow(this->y, 2)) * (pow(P.x, 2) + pow(P.y, 2)));
+    return A / B;
+}
+
 bool Ponto::operator==(const Ponto& P)
 {
     return {
@@ -48,6 +55,15 @@ bool Ponto::operator==(const Ponto& P)
         P.y == this->y &&
         P.z == this->z
     };
+}
+
+Ponto Ponto::operator*(Ponto P)
+{
+    Ponto temp;
+    temp.x = this->x * P.x;
+    temp.y = this->y * P.y;
+    temp.z = this->z * P.z;
+    return temp;
 }
 
 Ponto ObtemMaximo (Ponto P1, Ponto P2)

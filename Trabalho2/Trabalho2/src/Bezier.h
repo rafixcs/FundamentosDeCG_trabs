@@ -6,7 +6,7 @@ namespace BezierCalculo
 {
 	struct Bezier
 	{
-		static Ponto CalculaBezier3(const BezierStruct::Curva& curva, const int& direction, double t)
+		static Ponto CalculaBezier3(const BezierLab::Curva& curva, const int& direction, double t)
 		{
 			Ponto P;
 			double UmMenosT = 1 - t;

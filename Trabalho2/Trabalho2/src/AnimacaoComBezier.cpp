@@ -21,19 +21,20 @@
 
 using namespace std;
 
+
 #ifdef _WIN32
-#include <windows.h>
-#include <GL/freeglut.h>
+    #include <windows.h>
+    #include <GL/freeglut.h>
 #else
-#include <sys/time.h>
+    #include <sys/time.h>
 #endif
 
 #ifdef __APPLE__
-#include <GLUT/glut.h>
+    #include <GLUT/glut.h>
 #endif
 
 #ifdef __linux__
-#include <glut.h>
+    #include <glut.h>
 #endif
 
 #include "Ponto.h"
@@ -41,28 +42,29 @@ using namespace std;
 #include "Temporizador.h"
 #include "Labirinto.h"
 #include "Bezier.h"
+#include "Instancia.h"
 
 Temporizador T;
 double AccumDeltaT=0;
 
 // Limites l—gicos da ‡rea de desenho
 Ponto Min, Max;
-Poligono Quadrado;
-
-#include "Instancia.h"
-
-Instancia Personagens[10];
+#define QNT_PERSONAGENS 5
+Instancia personagens[QNT_PERSONAGENS];
 
 bool desenha = false;
 bool animando = false;
 
 float angulo=0.0;
 
-float tempo;// tempo em segundos para atravessar a tela
+float tempo; // tempo em segundos para atravessar a tela
 float TempoDaAnimacao;
 
-BezierStruct::Curva curvaAtual;
-BezierStruct::Labirinto labirinto;
+BezierLab::Curva curvaAtual;
+BezierLab::Labirinto labirinto;
+
+double nFrames = 0;
+double TempoTotal = 0;
 
 // **********************************************************************
 void DesenhaLabirinto()
@@ -72,6 +74,12 @@ void DesenhaLabirinto()
     for (int i = 0; i < labirinto.curvasLabirinto.size(); i++)
     {
         t = 0.f;
+        if (personagens[0].bProxCurvaSel)
+            if (personagens[0].proxCurva == i)
+                glColor3f(0, 1, 0);
+        else
+            glColor3f(1, 0, 0);
+
         glBegin(GL_LINE_STRIP);
         while(t<1.0)
         {
@@ -79,68 +87,57 @@ void DesenhaLabirinto()
             glVertex2f(P.x, P.y);
             t += DeltaT;
         }
-        glEnd();        
+        glEnd();
     }
 }
-// **********************************************************************
-//
-// **********************************************************************
-void init()
+
+void Init()
 {
     Ponto MinPoly, MaxPoly, Folga;
-    
-    // Define a cor do fundo da tela (AZUL)
-    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
-    
-    Quadrado.LePoligono("config/Retangulo.txt");
-    
+
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+
     Min = Ponto (-20, -20);
     Max = Ponto (20, 20);
 
-    // No trabalho, este ’ndice [0] NAO pode ser hard-coded.    
-    Personagens[0].posicao = Ponto(0,0);
-    Personagens[0].direcao = 1;
-    
-    tempo = 5;
-    // No trabalho, este ’ndice [0] NAO pode ser hard-coded.
-    Personagens[0].velocidade.x = (Max.x - Min.x)/tempo;
-    Personagens[0].velocidade.y = (Max.y - Min.y)/tempo;
-    
+    for (int i = 0; i < QNT_PERSONAGENS; i++)
+        personagens[i].Inicializa(Max, Min, "config/Triangulo.txt");
+
     labirinto.Initialize();
-    labirinto.getAsCurva(curvaAtual, 0);
 }
 
-double nFrames=0;
-double TempoTotal=0;
-
-// **********************************************************************
-//
-// **********************************************************************
-void AvancaComBezier()
+void AvancaComBezier(int index, double deltaTime)
 {
-    
-    double t;
-    t = TempoDaAnimacao/tempo;
-    if (t>1.0)
+    personagens[index].t += deltaTime * 0.35;
+    if (personagens[index].t > 1.0)
     {
-        cout << "Tempo da Animacao: " << TempoDaAnimacao << " segundos." << endl;
-        TempoDaAnimacao = 0.f;
-        labirinto.ProxCurva(curvaAtual, Personagens[0]);
+        personagens[index].t = 0.f;
+        personagens[index].AtualizaCurva();
+        personagens[index].bProxCurvaSel = false;
     }
-    Personagens[0].posicao = BezierCalculo::Bezier::CalculaBezier3(curvaAtual, Personagens[0].direcao, t);
+    else if (personagens[index].t > 0.5 && !personagens[index].bProxCurvaSel)
+    {
+        labirinto.ProxsCurva(personagens[index]);
+        personagens[index].bProxCurvaSel = true;
+    }
 
+    personagens[index].posicaoAnt = personagens[index].posicao;
+    personagens[index].posicao = BezierCalculo::Bezier::CalculaBezier3(
+        labirinto.curvasLabirinto[personagens[index].curvaAtual],
+        personagens[index].direcao,
+        personagens[index].t
+    );
 }
-// **********************************************************************
-//
-// **********************************************************************
+
 void AvancaPersonagens(double dt)
 {
-    AvancaComBezier();
+    for (int i = 0; i < QNT_PERSONAGENS; i++)
+    {
+        AvancaComBezier(i, dt);
+    }
 }
-// **********************************************************************
-//
-// **********************************************************************
-void animate()
+
+void Animate()
 {
     double dt;
     dt = T.getDeltaT();
@@ -148,32 +145,26 @@ void animate()
     TempoTotal += dt;
     nFrames++;
 
-    if (AccumDeltaT > 1.0/30) // fixa a atualiza‹o da tela em 30
+    if (AccumDeltaT > 1.0/30) // fixa a atualizacao da tela em 30
     {
         AccumDeltaT = 0;
-        //angulo+=0.05;
         glutPostRedisplay();
     }
     if (TempoTotal > 5.0)
     {
-        cout << "Tempo Acumulado: "  << TempoTotal << " segundos. " ;
+        cout << "Tempo Acumulado: " << TempoTotal << " segundos. ";
         cout << "Nros de Frames sem desenho: " << nFrames << endl;
-        cout << "FPS(sem desenho): " << nFrames/TempoTotal << endl;
+        cout << "FPS(sem desenho): " << nFrames / TempoTotal << endl;
         TempoTotal = 0;
         nFrames = 0;
     }
     if (animando)
     {
         AvancaPersonagens(dt);
-        TempoDaAnimacao += dt;
     }
 }
-// **********************************************************************
-//  void reshape( int w, int h )
-//  trata o redimensionamento da janela OpenGL
-//
-// **********************************************************************
-void reshape( int w, int h )
+
+void Reshape( int w, int h )
 {
     // Reset the coordinate system before modifying
     glMatrixMode(GL_PROJECTION);
@@ -181,16 +172,14 @@ void reshape( int w, int h )
     // Define a area a ser ocupada pela area OpenGL dentro da Janela
     glViewport(0, 0, w, h);  // Janela de Exibi‹o
     // Define os limites logicos da area OpenGL dentro da Janela
-    
+
     glOrtho(Min.x,Max.x, Min.y,Max.y, 0,1); //Janela de Sele‹o
     //glOrtho(0,10, 0,10, 0,1);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
-// **********************************************************************
-//
-// **********************************************************************
+
 void DesenhaEixos()
 {
     Ponto Meio;
@@ -198,78 +187,45 @@ void DesenhaEixos()
     Meio.y = (Max.y+Min.y)/2;
     Meio.z = (Max.z+Min.z)/2;
 
-    glBegin(GL_LINES); // vou desenhar LINHAS
-    //  eixo horizontal
+    glBegin(GL_LINES);
+    {
+        //  eixo horizontal
         glVertex2f(Min.x,Meio.y);
         glVertex2f(Max.x,Meio.y);
-    //  eixo vertical
+        //  eixo vertical
         glVertex2f(Meio.x,Min.y);
         glVertex2f(Meio.x,Max.y);
+    }
     glEnd();
 }
-// **********************************************************************
-//
-// **********************************************************************
+
 void RotacionaAoRedorDeUmPonto(float alfa, Ponto P)
 {
     glTranslatef(P.x, P.y, P.z);
     glRotatef(alfa, 0,0,1);
     glTranslatef(-P.x, -P.y, -P.z);
 }
-// **********************************************************************
-//  void display( void )
-// **********************************************************************
-void display( void )
+
+void Display( void )
 {
-	// Limpa a tela com a cor de fundo
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-	// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-	// Coloque aqui as chamadas das rotinas que desenham os objetos
-	// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 	glLineWidth(3);
-	glColor3f(1,1,1); // R, G, B  [0..1]
-   // glRotatef(angulo, 0,0,1); // rotiona no eixo Z
-    DesenhaEixos();
-    
-    glPushMatrix();
-        glColor3f(1,0,0); // R, G, B  [0..1]
-        Ponto Metade;
-        Ponto Min, Max;
-        Quadrado.obtemLimites(Min,Max);
-        Metade.x = (Max.x-Min.x)/2;
-        Metade.y = (Max.y-Min.y)/2;
-        Metade.z = (Max.z-Min.z)/2;
+	glColor3f(1,0,0);
 
-        // Personagens[0].desenha(); Esta Ž forma organizada de fazer o desenho
+    DesenhaLabirinto();
 
-    // Esta Ž a forma DESORGANIZADA
-                glTranslatef(-Metade.x, -Metade.y, -Metade.z); // Muda o sistema de REF para o meio do objeto
+    for (int i = 0; i < QNT_PERSONAGENS; i++)
+        personagens[i].Desenha();
 
-                // No trabalho, este ’ndice [0] NAO pode ser hard-coded.
-                glTranslatef(Personagens[0].posicao.x,
-                             Personagens[0].posicao.y,
-                             Personagens[0].posicao.z);  // posiciona o objeto
-                //Posicoes[0].imprime(); cout << endl;
-                Quadrado.desenhaPoligono();
-    glPopMatrix();
-    
     glColor3f(1,0,0);
     glPointSize(3);
-    DesenhaLabirinto();
-    
-    
 	glutSwapBuffers();
 }
-// **********************************************************************
-// ContaTempo(double tempo)
-//      conta um certo nœmero de segundos e informa quanto frames
-// se passaram neste per’odo.
-// **********************************************************************
+
 void ContaTempo(double tempo)
 {
     Temporizador T;
@@ -288,46 +244,33 @@ void ContaTempo(double tempo)
     }
 
 }
-// **********************************************************************
-//  void keyboard ( unsigned char key, int x, int y )
-//
-// **********************************************************************
 
-void keyboard ( unsigned char key, int x, int y )
+void Keyboard ( unsigned char key, int x, int y )
 {
 
 	switch ( key )
 	{
-		case 27:        // Termina o programa qdo
-			exit ( 0 );   // a tecla ESC for pressionada
+		case 27:
+			exit ( 0 );
 			break;
         case 't':
             ContaTempo(3);
             break;
-        case '1':
-            animando = true;
-            TempoDaAnimacao = 0;
-            Personagens[0].posicao = Ponto (Min.x,0);
-            Personagens[0].direcao = 1;
-            cout << "Posicao Inicial: "; Personagens[0].posicao.imprime(); cout << endl;
+        case 32:
+            animando = !animando;
             break;
-        case '2':
-            animando = true;
-            TempoDaAnimacao = 0;
-            Personagens[0].posicao = Ponto (Min.x,Min.y);
-            Personagens[0].direcao  = -1;
-            cout << "Posicao Inicial: "; Personagens[0].posicao.imprime(); cout << endl;
+        case 'x':
+            personagens[0].TrocaProxCurva();
             break;
-		default:
-			break;
+        case 'z':
+            personagens[0].TrocaDirecao();
+            if (personagens[0].t > 0.5f)
+                labirinto.ProxsCurva(personagens[0]);
+		default: break;
 	}
 }
-// **********************************************************************
-//  void arrow_keys ( int a_keys, int x, int y )
-//
-//
-// **********************************************************************
-void arrow_keys ( int a_keys, int x, int y )
+
+void ArrowKeysHandler ( int a_keys, int x, int y )
 {
 	switch ( a_keys )
 	{
@@ -340,8 +283,7 @@ void arrow_keys ( int a_keys, int x, int y )
         case GLUT_KEY_LEFT:       // Se pressionar SETA ESQ
             angulo++;
             break;
-	    case GLUT_KEY_DOWN:     // Se pressionar UP
-								// Reposiciona a janela
+	    case GLUT_KEY_DOWN:     // Se pressionar UP reposiciona a janela
             glutPositionWindow (50,50);
 			glutReshapeWindow ( 700, 500 );
 			break;
@@ -351,51 +293,47 @@ void arrow_keys ( int a_keys, int x, int y )
 //    glutPostRedisplay();
 }
 
-// **********************************************************************
-//  void main ( int argc, char** argv )
-//
-// **********************************************************************
-int  main ( int argc, char** argv )
+int main ( int argc, char** argv )
 {
     cout << "Programa OpenGL" << endl;
 
-    glutInit            ( &argc, argv );
-    glutInitDisplayMode (GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGB );
-    glutInitWindowPosition (0,0);
+    glutInit( &argc, argv );
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGB );
+    glutInitWindowPosition(0,0);
 
     // Define o tamanho inicial da janela grafica do programa
-    glutInitWindowSize  ( 500, 500);  // Define o SRD
+    glutInitWindowSize( 500, 500);  // Define o SRD
 
     // Cria a janela na tela, definindo o nome da
     // que aparecera na barra de titulo da janela.
-    glutCreateWindow    ( "Primeiro Programa em OpenGL" );
+    glutCreateWindow( "Primeiro Programa em OpenGL" );
 
     // executa algumas inicializações
-    init ();
+    Init();
 
     // Define que o tratador de evento para
     // o redesenho da tela. A funcao "display"
     // será chamada automaticamente quando
     // for necessário redesenhar a janela
-    glutDisplayFunc ( display );
+    glutDisplayFunc( Display );
 
     // Define que o tratador de evento para
     // o invalida‹o da tela. A funcao "display"
     // será chamada automaticamente sempre que a
     // m‡quina estiver ociosa (idle)
-    glutIdleFunc(animate);
+    glutIdleFunc(Animate);
 
     // Define que o tratador de evento para
     // o redimensionamento da janela. A funcao "reshape"
     // será chamada automaticamente quando
     // o usuário alterar o tamanho da janela
-    glutReshapeFunc ( reshape );
+    glutReshapeFunc( Reshape );
 
     // Define que o tratador de evento para
     // as teclas. A funcao "keyboard"
     // será chamada automaticamente sempre
     // o usuário pressionar uma tecla comum
-    glutKeyboardFunc ( keyboard );
+    glutKeyboardFunc( Keyboard );
 
     // Define que o tratador de evento para
     // as teclas especiais(F1, F2,... ALT-A,
@@ -403,10 +341,10 @@ int  main ( int argc, char** argv )
     // A funcao "arrow_keys" será chamada
     // automaticamente sempre o usuário
     // pressionar uma tecla especial
-    glutSpecialFunc ( arrow_keys );
+    glutSpecialFunc( ArrowKeysHandler );
 
     // inicia o tratamento dos eventos
-    glutMainLoop ( );
+    glutMainLoop();
 
     return 0;
 }

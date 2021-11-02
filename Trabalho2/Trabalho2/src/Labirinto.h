@@ -6,10 +6,11 @@
 #include "Curva.h"
 #include "Instancia.h"
 
-namespace BezierStruct
+namespace BezierLab
 {
-	struct Labirinto
+	class Labirinto
 	{
+	public:
 		std::vector<Curva> curvasLabirinto;
 		
 		Labirinto();
@@ -18,6 +19,6 @@ namespace BezierStruct
 
 		void Initialize();
 		void getAsCurva(Curva& curva, const int& index);
-		void ProxCurva(Curva& curvaAtual, Instancia& personagem);
+		void ProxsCurva(struct Instancia& personagem);
 	};
 }
