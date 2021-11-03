@@ -120,6 +120,7 @@ void Init()
 
 void AvancaComBezier(int index, double deltaTime)
 {
+    // TODO: arruma velocidade para cada curva
     personagens[index].t += deltaTime * 0.35;
     if (personagens[index].t > 1.0)
     {

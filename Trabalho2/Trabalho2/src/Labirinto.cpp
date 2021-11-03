@@ -73,6 +73,7 @@ void Labirinto::getAsCurva(Curva& curva, const int& index)
 
 void Labirinto::ProxsCurva(Instancia& personagem)
 {
+	// TODO: garantir troca certa das curvas
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	int randIndex = 0;
