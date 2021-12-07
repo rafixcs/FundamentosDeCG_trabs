@@ -7,22 +7,26 @@ from Texture import Texture
 from Paredao import *
 import time
 from math import *
+from Jogador import Jogador
 
 P_WIDTH = 25
 P_HEIGHT = 15
 P_BRICKSIZE = 1
 
 gblAngulo = 0.0
-gblAnda = -4.0
-gblAnda2 = -1.0
+gblAnda = 0
+gblAnda2 = 0
 angle = 1.8
 lx = 0.2
 lz = 0.9
 upY = 0
+angleY = 0
 gblPosAspectRatio = 0
 gblTexturesId = {}
 modoprojecao = False
 paredao = None
+jogador = None
+jogadorPos = [0,0]
 
 # **********************************************************************
 #  init()
@@ -36,6 +40,9 @@ def init():
     global lz
     global upY
     global paredao
+    global angleY
+    global jogador
+    global jogadorPo
 
     # Define a cor do fundo da tela (BRANCO) 
     glClearColor(0.5, 0.5, 0.5, 1.0)
@@ -54,12 +61,16 @@ def init():
     gblTexturesId['brick'] = texture.getTextureId()
     paredao = Paredao(P_WIDTH, P_HEIGHT, P_BRICKSIZE, gblTexturesId['brick'])
 
-    gblAnda = -4.0 #-4.45
-    gblAnda2 = -1.0 #0.446
-    angle = 1.8
-    lx = 0.2 #0.9899
-    lz = 0.9 #0.1411
-    upY = 0 #66
+    gblAnda = 0#11.8779#-19.11339#0.8053#-4.0 #-4.45
+    gblAnda2 = 0#-35.033#-8.3941#0.7084#-1.0 #0.446
+    angle = 1.7998#2.5999#2.8#1.8
+    lx = 0.2271#0.8568#0.9422#0.2 #0.9899
+    lz = 0.9738#0.5155#0.3349#0.9 #0.1411
+    upY = 8#4 #0 #66
+    angleY = 0
+    jogadorPos = [0,0]
+
+    jogador = Jogador(0,0)
 
 
 # **********************************************************************
@@ -132,6 +143,7 @@ def PosicUser():
     global lx
     global lz
     global upY
+    global angleY
 
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
@@ -144,9 +156,10 @@ def PosicUser():
     
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    gluLookAt(gblAnda, upY, gblAnda2, 
-              gblAnda + lx, 0, gblAnda2 + lz,
-              0, 2.0 ,0.0) 
+    gluLookAt(11.8779, 8, -35.033, 
+              11.8779 + 0.2271, 8, -35.033 + 0.9738,
+              0, 2 ,0)
+    glRotatef(angleY, 1, 1, 0) 
 
 # **********************************************************************
 # void DesenhaLadrilho(int corBorda, int corDentro)
@@ -208,25 +221,11 @@ def display():
     PosicUser()
 
     glMatrixMode(GL_MODELVIEW)    
-     
-    '''glPushMatrix()
-    glColor3f(0.5,0.0,0.0) # Vermelho
-    glTranslatef(-1.0,0,3.0)
-    glRotatef(gblAngulo,0,1,0)
-    DesenhaCubo()
-    glPopMatrix()
-    
-    glPushMatrix()
-    glColor3f(0.5,0.5,0.0) # Amarelo
-    glTranslatef(2.0,0.0,2.0)
-    glRotatef(gblAngulo,0,1,0)
-    DesenhaCubo()
-    glPopMatrix()'''
     
     DesenhaPiso()
-    paredao.Draw()
+    paredao.Draw()    
+    jogador.draw()
 
-    #gblAngulo = gblAngulo + 1
 
     glutSwapBuffers()
 
@@ -242,7 +241,7 @@ nFrames, TempoTotal, AccumDeltaT = 0, 0, 0
 oldTime = time.time()
 
 def animate():
-    global nFrames, TempoTotal, AccumDeltaT, oldTime
+    global nFrames, TempoTotal, AccumDeltaT, oldTime, dt
 
     nowTime = time.time()
     dt = nowTime - oldTime
@@ -267,6 +266,8 @@ def keyboard(*args):
     #print (args)
     # If escape is pressed, kill everything.
     global upY
+    global angleY
+    global dt
 
     if args[0] == ESCAPE:   # Termina o programa qdo
         os._exit(0)         # a tecla ESC for pressionada
@@ -279,6 +280,10 @@ def keyboard(*args):
         upY += 2
     elif args[0] == b's':        
         upY -= 2
+    elif args[0] == b'1':
+        angleY = sin(angleY) + 1.5 * dt
+    elif args[0] == b'2':
+        angleY = cos(angleY) - 1.5 * dt
     # ForÃ§a o redesenho da tela
     glutPostRedisplay()
 
@@ -293,23 +298,34 @@ def arrow_keys(a_keys: int, xx: int, yy: int):
     global angle
     global lx
     global lz
+    global jogador
+    global jogadorPos
 
     fraction = 0.2
     
     if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
-        angle += fraction
+        '''angle += fraction
         lz = sin(angle)
-        lx = -cos(angle)
+        lx = -cos(angle)'''
+        jogadorPos[1] -= 1
+        jogador.movimenta(jogadorPos, (lx, lz), angle)
     elif a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
-        angle -= fraction
+        '''angle -= fraction
         lz = sin(angle)
-        lx = -cos(angle)
+        lx = -cos(angle)'''
+        jogadorPos[1] += 1
+        jogador.movimenta(jogadorPos, (lx, lz), angle) 
     elif a_keys == GLUT_KEY_UP:         # Se pressionar UP
-        gblAnda += lx * fraction * 1.5
-        gblAnda2 += lz * fraction * 1.5
+        '''gblAnda += lx * fraction * 1.5
+        gblAnda2 += lz * fraction * 1.5'''
+        jogadorPos[0] += 1
+        jogador.movimenta(jogadorPos, (lx, lz), angle)
     elif a_keys == GLUT_KEY_DOWN:       # Se pressionar DOWN        
-        gblAnda -= lx * fraction * 1.5
-        gblAnda2 -= lz * fraction * 1.5   
+        '''gblAnda -= lx * fraction * 1.5
+        gblAnda2 -= lz * fraction * 1.5'''
+        jogadorPos[0] -= 1
+        jogador.movimenta( jogadorPos, (lx, lz), angle)
+
     glutPostRedisplay()
 
 
@@ -328,7 +344,7 @@ if __name__ == '__main__':
     
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGB)
     glutInitWindowPosition(0, 0)
-    glutInitWindowSize(700, 700)
+    glutInitWindowSize(1548, 755)
     glutInitWindowPosition(100, 100)
     
     wind = glutCreateWindow(b"Trabalho 3 Fundamentos de CG")
