@@ -4,6 +4,7 @@ from OpenGL.GLU import *
 from Ponto import Ponto
 from Trabalho3 import *
 import random
+from Jogador import *
 
 surfaces = (
     (0,1,2,3),
@@ -42,7 +43,7 @@ class BrickCube:
 
     def Draw(self):        
             glPushMatrix()
-            glTranslated(self.pos.x, self.pos.y, self.pos.z)
+            glTranslated(self.pos[0], self.pos[1], self.pos[2])
             DesenhaCubo()
 
             # TOO SLOOOW
@@ -68,13 +69,14 @@ class Paredao:
         self.height = height
         self.brick_size = brick_size
         self.bricks = []
+        self.matrix = []
         self._build(textureId)
 
     def _build(self, textureId):
         index = 0
         for x in range(0, self.width):
             for y in range(0, self.height):
-                __brick = BrickCube(Ponto(15+x, y-0.5), index, self.brick_size, textureId)
+                __brick = BrickCube(numpy.array((15+x, y-0.5, 0)), index, self.brick_size, textureId)
                 self.bricks.append(__brick)
 
     def Draw(self):
@@ -84,6 +86,9 @@ class Paredao:
                 glPushMatrix()
                 glRotatef(90, 0.0, 1.0, 0.0)
                 glTranslated(-39, 0, 24)
+                matrix = numpy.array(numpy.zeros(16))
+                glGetFloatv(GL_MODELVIEW_MATRIX, matrix)
+                brick.matrix = matrix
                 glColor3f(1.0, 1.0, 1.0)
                 glEnable(GL_TEXTURE_GEN_S)
                 glEnable(GL_TEXTURE_GEN_T)
@@ -92,3 +97,10 @@ class Paredao:
                 glDisable(GL_TEXTURE_GEN_S)
                 glDisable(GL_TEXTURE_GEN_T)
                 glPopMatrix()
+    
+    def Colision(self, jogador):
+        for brick in self.bricks:            
+            aux = brick.pos - jogador.tiro.pos_t
+            if aux[0] < 1 and aux[1] < 1 and aux[2] < 1:
+                self.bricks.remove(brick)
+                jogador.tiro.enabled = False

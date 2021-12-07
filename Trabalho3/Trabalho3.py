@@ -223,7 +223,9 @@ def display():
     glMatrixMode(GL_MODELVIEW)    
     
     DesenhaPiso()
-    paredao.Draw()    
+    paredao.Draw()
+    if jogador.tiro != None:
+        paredao.Colision(jogador)
     jogador.draw()
 
 
@@ -268,6 +270,7 @@ def keyboard(*args):
     global upY
     global angleY
     global dt
+    global jogador
 
     if args[0] == ESCAPE:   # Termina o programa qdo
         os._exit(0)         # a tecla ESC for pressionada
@@ -284,6 +287,12 @@ def keyboard(*args):
         angleY = sin(angleY) + 1.5 * dt
     elif args[0] == b'2':
         angleY = cos(angleY) - 1.5 * dt
+    elif args[0] == b'z':
+        jogador.movimenta((0,0), (5,0), 15)
+    elif args[0] == b'x':
+        jogador.movimenta((0,0), (-5,0), 15)
+    elif args[0] == b'f':
+        jogador.shot()
     # ForÃ§a o redesenho da tela
     glutPostRedisplay()
 
@@ -307,24 +316,20 @@ def arrow_keys(a_keys: int, xx: int, yy: int):
         '''angle += fraction
         lz = sin(angle)
         lx = -cos(angle)'''
-        jogadorPos[1] -= 1
-        jogador.movimenta(jogadorPos, (lx, lz), angle)
+        jogador.movimenta((0,0,-1), (lx, lz), angle)
     elif a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
         '''angle -= fraction
         lz = sin(angle)
         lx = -cos(angle)'''
-        jogadorPos[1] += 1
-        jogador.movimenta(jogadorPos, (lx, lz), angle) 
+        jogador.movimenta((0,0,1), (lx, lz), angle) 
     elif a_keys == GLUT_KEY_UP:         # Se pressionar UP
         '''gblAnda += lx * fraction * 1.5
         gblAnda2 += lz * fraction * 1.5'''
-        jogadorPos[0] += 1
-        jogador.movimenta(jogadorPos, (lx, lz), angle)
+        jogador.movimenta((1,0,0), (lx, lz), angle)
     elif a_keys == GLUT_KEY_DOWN:       # Se pressionar DOWN        
         '''gblAnda -= lx * fraction * 1.5
         gblAnda2 -= lz * fraction * 1.5'''
-        jogadorPos[0] -= 1
-        jogador.movimenta( jogadorPos, (lx, lz), angle)
+        jogador.movimenta((-1,0,0), (lx, lz), angle)
 
     glutPostRedisplay()
 
